@@ -2,7 +2,7 @@
 
 **GuessMyMess.io** is a high-polish, real-time multiplayer drawing and guessing game built from scratch. Inspired by the classic Pictionary experience, it features a custom-built drawing engine, dynamic avatar customization, and full mobile support.
 
-![GuessMyMess Landing Page](client/img/landing_screenshot.png) *(Note: Add your screenshot here once hosted!)*
+
 
 ## 🚀 Key Features
 
@@ -40,7 +40,7 @@
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/GuessMyMess.git
+   git clone https://github.com/grv-io/GuessMyMess.git
    ```
 2. Navigate to the project folder:
    ```bash
