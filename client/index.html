@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GuessMyMess.io — Draw & Guess!</title>
+  <meta name="description" content="GuessMyMess.io — A fun multiplayer drawing and guessing game. Draw, guess, and compete with friends in real-time!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ════════════════ LANDING SCREEN ════════════════ -->
+  <div id="landing-screen" class="screen active">
+    <div class="landing-container">
+      <div class="logo-wrapper">
+        <h1 class="logo">
+          <span class="logo-g">g</span><span class="logo-u">u</span><span class="logo-e">e</span><span class="logo-s">s</span><span class="logo-s2">s</span><span class="logo-m">m</span><span class="logo-y">y</span><span class="logo-m2">m</span><span class="logo-e2">e</span><span class="logo-s3">s</span><span class="logo-s4">s</span><span class="logo-dot">.</span><span class="logo-io">io</span><span class="logo-pencil">✏️</span>
+        </h1>
+        <div class="logo-avatars">
+          🧑‍🎨👩‍🎨👨‍🎨🎨👾🤖🐱🦊
+        </div>
+      </div>
+
+      <div class="landing-card">
+        <div class="landing-card-inner">
+          <div class="landing-top-row">
+            <div class="input-group">
+              <input type="text" id="username-input" placeholder="Enter your name..." maxlength="20" autocomplete="off" />
+            </div>
+            <div class="language-select-wrapper">
+              <select id="language-select">
+                <option value="english">English</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="german">German</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Avatar Customization -->
+          <div class="avatar-customizer">
+            <button class="avatar-nav avatar-prev" id="avatar-prev">❮</button>
+            <div class="avatar-display" id="avatar-display">
+              <canvas id="avatar-canvas" width="80" height="80"></canvas>
+            </div>
+            <button class="avatar-nav avatar-next" id="avatar-next">❯</button>
+          </div>
+          <div class="avatar-categories">
+            <button class="avatar-cat-btn active" data-cat="bodyColor" title="Body Color">🎨</button>
+            <button class="avatar-cat-btn" data-cat="eyeIndex" title="Eyes">👁️</button>
+            <button class="avatar-cat-btn" data-cat="mouthIndex" title="Mouth">👄</button>
+            <button class="avatar-cat-btn" data-cat="hatIndex" title="Hat / Accessory">🎩</button>
+          </div>
+
+          <button id="create-room-btn" class="btn btn-play">
+            Play!
+          </button>
+          <button id="join-room-btn-main" class="btn btn-private-room">
+            Create Private Room
+          </button>
+
+          <div class="join-room-row" id="join-room-row" style="display:none;">
+            <input type="text" id="room-code-input" placeholder="Room Code" maxlength="4" autocomplete="off" />
+            <button id="join-room-btn" class="btn btn-join">Join</button>
+          </div>
+        </div>
+        <p id="landing-error" class="error-text"></p>
+        <div class="creator-credit">Created by <strong>Gaurav Agrawal</strong></div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="info-icon">❓</div>
+          <h3>About</h3>
+          <p><strong>GuessMyMess.io</strong> is a free online multiplayer drawing and guessing pictionary game.</p>
+          <p>A normal game consists of a few rounds, where every player has to draw their chosen word and others have to guess it to gain points!</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">📰</div>
+          <h3>News</h3>
+          <p><strong>Fresh paint</strong></p>
+          <p>Hello! Redesign of the page, mobile support, reworked tools and more!</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🖊️</div>
+          <h3>How to play</h3>
+          <p>When it's your turn, choose a word and draw it! Everyone else has to guess what you're drawing.</p>
+          <p>The faster you guess, the more points you get!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ LOBBY SCREEN ════════════════ -->
+  <div id="lobby-screen" class="screen">
+    <div class="lobby-container">
+      <h2 class="lobby-title">Room Lobby</h2>
+      <div class="room-code-display">
+        <span class="room-code-label">Room Code:</span>
+        <span id="lobby-room-code" class="room-code-value"></span>
+        <button id="copy-code-btn" class="btn btn-small" title="Copy code">📋</button>
+      </div>
+      <div class="lobby-players">
+        <h3>Players</h3>
+        <ul id="lobby-player-list"></ul>
+      </div>
+      <button id="start-game-btn" class="btn btn-play" style="display:none;">
+        🚀 Start Game
+      </button>
+      <p class="lobby-hint" id="lobby-hint">Waiting for host to start the game...</p>
+    </div>
+  </div>
+
+  <!-- ════════════════ GAME SCREEN ════════════════ -->
+  <div id="game-screen" class="screen">
+    <!-- Top Bar -->
+    <div class="game-topbar">
+      <div class="timer-container">
+        <div class="timer-circle" id="timer-ring">
+          <span id="timer-text" class="timer-text">80</span>
+        </div>
+      </div>
+      <div class="round-info">
+        Round <span id="round-current">1</span> of <span id="round-max">3</span>
+      </div>
+      <div class="word-hint-container">
+        <div class="word-hint-label">GUESS THIS</div>
+        <span id="word-hint" class="word-hint">_ _ _ _ _</span>
+      </div>
+      <div class="topbar-settings">
+        <button class="settings-btn mobile-only" id="scoreboard-toggle" title="Player List">👥</button>
+        <button class="settings-btn mobile-only" id="chat-toggle" title="Chat">💬</button>
+        <button class="settings-btn" id="settings-btn" title="Settings">⚙️</button>
+      </div>
+    </div>
+
+    <div class="game-body">
+      <!-- Scoreboard (Left) -->
+      <div class="scoreboard-panel">
+        <ul id="scoreboard-list"></ul>
+      </div>
+
+      <!-- Canvas (Center) -->
+      <div class="canvas-area">
+        <div class="canvas-wrapper">
+          <canvas id="drawing-canvas"></canvas>
+          <div class="canvas-reactions">
+            <button class="reaction-btn" id="like-btn" title="Like">👍</button>
+            <button class="reaction-btn" id="dislike-btn" title="Dislike">👎</button>
+          </div>
+        </div>
+        <!-- Drawing Toolbar -->
+        <div class="toolbar" id="toolbar">
+          <div class="tool-section tool-colors">
+            <div class="color-row">
+              <button class="swatch" data-color="#000000" style="background:#000000" title="Black"></button>
+              <button class="swatch" data-color="#666666" style="background:#666666" title="Grey"></button>
+              <button class="swatch" data-color="#0050cd" style="background:#0050cd" title="Blue"></button>
+              <button class="swatch" data-color="#ffffff" style="background:#ffffff" title="White"></button>
+              <button class="swatch" data-color="#aaaaaa" style="background:#aaaaaa" title="Light Grey"></button>
+              <button class="swatch" data-color="#26c9ff" style="background:#26c9ff" title="Light Blue"></button>
+              <button class="swatch" data-color="#017420" style="background:#017420" title="Dark Green"></button>
+              <button class="swatch" data-color="#990000" style="background:#990000" title="Dark Red"></button>
+              <button class="swatch" data-color="#964112" style="background:#964112" title="Brown"></button>
+              <button class="swatch" data-color="#00ea00" style="background:#00ea00" title="Green"></button>
+              <button class="swatch" data-color="#ff0013" style="background:#ff0013" title="Red"></button>
+              <button class="swatch" data-color="#ff7829" style="background:#ff7829" title="Orange"></button>
+              <button class="swatch" data-color="#b900b7" style="background:#b900b7" title="Purple"></button>
+              <button class="swatch" data-color="#ffd800" style="background:#ffd800" title="Yellow"></button>
+              <button class="swatch" data-color="#00d4aa" style="background:#00d4aa" title="Teal"></button>
+              <button class="swatch" data-color="#ff65b2" style="background:#ff65b2" title="Pink"></button>
+              <button class="swatch" data-color="#e8ae5e" style="background:#e8ae5e" title="Tan"></button>
+              <button class="swatch" data-color="#6dd9cb" style="background:#6dd9cb" title="Aqua"></button>
+            </div>
+          </div>
+          <div class="tool-section tool-sizes">
+            <button class="size-btn active" data-size="4" title="Small"><span class="size-dot size-small"></span></button>
+            <button class="size-btn" data-size="14" title="Medium"><span class="size-dot size-medium"></span></button>
+            <button class="size-btn" data-size="26" title="Large"><span class="size-dot size-large"></span></button>
+            <button class="size-btn" data-size="40" title="Extra Large"><span class="size-dot size-xlarge"></span></button>
+          </div>
+          <div class="tool-section tool-actions">
+            <button class="tool-btn active" data-tool="pen" title="Pen">✏️</button>
+            <button class="tool-btn" data-tool="eraser" title="Eraser">🧹</button>
+            <button class="tool-btn" data-tool="fill" title="Fill">🪣</button>
+            <button class="tool-btn" id="undo-btn" title="Undo">↩️</button>
+            <button class="tool-btn" id="clear-btn" title="Clear">🗑️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat (Right) -->
+      <div class="chat-panel">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-wrapper">
+          <input type="text" id="chat-input" placeholder="Type your guess here..." autocomplete="off" />
+          <button id="send-btn" class="btn btn-send">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ WORD CHOICE MODAL ════════════════ -->
+  <div id="word-modal" class="modal-overlay">
+    <div class="modal">
+      <h2>Choose a word to draw</h2>
+      <div class="word-choices" id="word-choices"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════ RESULTS SCREEN ════════════════ -->
+  <div id="results-screen" class="screen">
+    <div class="results-container">
+      <h2 class="results-title">🏆 Game Over!</h2>
+      <div id="podium" class="podium"></div>
+      <ol id="results-list" class="results-list"></ol>
+      <button id="play-again-btn" class="btn btn-play" style="display:none;">
+        🔄 Play Again
+      </button>
+      <button id="back-to-menu-btn" class="btn btn-private-room">Back to Menu</button>
+    </div>
+  </div>
+
+  <!-- ════════════════ TURN OVERLAY ════════════════ -->
+  <div id="turn-overlay" class="turn-overlay">
+    <div class="turn-content">
+      <p id="turn-overlay-text"></p>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
